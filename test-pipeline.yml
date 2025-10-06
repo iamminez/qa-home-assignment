@@ -15,13 +15,13 @@ jobs:
       ACTIONS_STEP_DEBUG: true
 
     steps:
-    # Step 1: Clear GitHub Actions cache to avoid stale versions
-    - name: Clear GitHub Actions cache
-      run: rm -rf ~/.actions
-
-    # Step 2: Checkout code
+    # Step 1: Checkout code
     - name: Checkout code
       uses: actions/checkout@v4
+
+    # Step 2: Clear GitHub Actions cache
+    - name: Clear GitHub Actions cache
+      run: rm -rf ~/.actions
 
     # Step 3: Build Docker image
     - name: Build Docker image

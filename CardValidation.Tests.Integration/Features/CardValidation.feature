@@ -1,78 +1,161 @@
-Feature: Card Validation
-  Validate card fields and determine payment system type.
+﻿Feature: Validate Credit Card
+  As a QA engineer
+  I want to validate credit card numbers via the API
+  So that I can ensure the correct payment system is returned
 
-  #Scenario: Valid full card input
-  #Given the card owner is "John Doe"
-  #And the card number is "4111111111111111"
-  #And the issue date is "12/30"
-  #And the CVC is "123"
-  #When I validate the full card
-  #Then the result should be valid
-  #And the payment system should be "Visa"
-
-  Scenario: Valid card owner
-    Given the card owner is "John Doe"
-    When I validate the owner
-    Then the result should be valid
-#
-#  Scenario: Invalid card owner
-#    Given the card owner is ""
-#    When I validate the owner
-#    Then the result should be false
-#
-#  Scenario: Valid issue date
-#    Given the issue date is "01/25"
-#    When I validate the issue date
-#    Then the result should be true
-#
-#  Scenario: Invalid issue date
-#    Given the issue date is "13/99"
-#    When I validate the issue date
-#    Then the result should be false
-#
-#  Scenario: Valid CVC
-#    Given the CVC is "123"
-#    When I validate the CVC
-#    Then the result should be true
-#
-#  Scenario: Invalid CVC
-#    Given the CVC is "12"
-#    When I validate the CVC
-#    Then the result should be false
-#
-#  Scenario: Valid card number
-#    Given the card number is "4111111111111111"
-#    When I validate the card number
-#    Then the result should be true
-#
-#  Scenario: Invalid card number
-#    Given the card number is "1234567890123456"
-#    When I validate the card number
-#    Then the result should be false
-#
-#  Scenario: Get Visa payment system
-#    Given the card number is "4111111111111111"
-#    When I get the payment system type
-#    Then the payment system should be "Visa"
-#
-#  Scenario: Get MasterCard payment system
-#    Given the card number is "5500000000000004"
-#    When I get the payment system type
-#    Then the payment system should be "MasterCard"
-#
-#  Scenario: Unknown card type throws exception
-#    Given the card number is "0000000000000000"
-#    When I get the payment system type
-#    Then an exception should be thrown
-
-# CardValidation.Web
-  Scenario: Valid Visa card number
+Scenario: Full card details is valid
+    Given I have the owner "Jane Doe"
     Given I have a credit card number "4111111111111111"
+    Given I have the CVV "123"
+    Given I have the date "09/29"
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 200
+
+Scenario: Visa card number is valid
+    Given I have the owner "Jane Doe"
+    Given I have a credit card number "4111111111111111"
+    Given I have the CVV "123"
+    Given I have the date "09/29"
     When I send a POST request to "/CardValidation/card/credit/validate"
     Then the response status code should be 200
     And the response should contain "Visa"
 
-  Scenario: Invalid card number
-    Given I have a credit card number ""
+Scenario: MasterCard card number is valid
+    Given I have the owner "Jane Doe"
+    Given I have a credit card number "5500000000000004"
+    Given I have the CVV "123"
+    Given I have the date "09/29"
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 200
+    And the response should contain "MasterCard"
+
+Scenario: AmericanExpress card number is valid
+    Given I have the owner "Jane Doe"
+    Given I have a credit card number "340000000000009"
+    Given I have the CVV "123"
+    Given I have the date "09/29"
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 200
+    And the response should contain "AmericanExpress"
+
+Scenario: Owner should be required
+    Given I have a credit card number "340000000000009"
+    Given I have the CVV "123"
+    Given I have the date "09/29"
     When I send a POST request to "/CardValidation/card/credit/validate"
     Then the response status code should be 400
+    And the response should contain validation error "Owner is required" for field "Owner"
+ 
+Scenario: Owner name with numbers is invalid
+    Given I have the owner "Jane 123"
+    Given I have a credit card number "340000000000009"
+    Given I have the CVV "123"
+    Given I have the date "09/29"    
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 400
+    And the response should contain validation error "Wrong owner" for field "Owner"
+
+Scenario: Owner name with special characters is invalid
+    Given I have the owner "Jane¤#&"( J(/&"
+    Given I have a credit card number "340000000000009"
+    Given I have the CVV "123"
+    Given I have the date "09/29"    
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 400
+    And the response should contain validation error "Wrong owner" for field "Owner"
+
+Scenario: Owner name with alphanumeric characters is invalid
+    Given I have the owner "Jan3 D03"
+    Given I have a credit card number "340000000000009"
+    Given I have the CVV "123"
+    Given I have the date "09/29"    
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 400
+    And the response should contain validation error "Wrong owner" for field "Owner"
+
+Scenario: Credit card number should be required
+    Given I have the owner "Jane Doe"
+    Given I have the CVV "123"
+    Given I have the date "09/29"
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 400
+    And the response should contain validation error "Number is required" for field "Number"
+
+Scenario: Credit card number with letters is invalid
+    Given I have the owner "Jane Doe"
+    Given I have a credit card number "340000000000abc"
+    Given I have the CVV "123"
+    Given I have the date "09/29"    
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 400
+    And the response should contain validation error "Wrong number" for field "Number"
+
+Scenario: Credit card number with special characters is invalid
+    Given I have the owner "Jane Doe"
+    Given I have a credit card number "&4000000000000!"
+    Given I have the CVV "123"
+    Given I have the date "09/29"    
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 400
+    And the response should contain validation error "Wrong number" for field "Number"
+
+Scenario: CVV should be required
+  Given I have the owner "John Doe"
+  And I have a credit card number "4111111111111111"
+  And I have the date "09/29"
+  When I send a POST request to "/CardValidation/card/credit/validate"
+  Then the response status code should be 400
+  And the response should contain validation error "Cvv is required" for field "Cvv"
+
+Scenario: CVV with letters is invalid
+    Given I have the owner "Jane Doe"
+    Given I have a credit card number "340000000000009"
+    Given I have the CVV "abc"
+    Given I have the date "09/29"    
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 400
+    And the response should contain validation error "Wrong cvv" for field "Cvv"
+
+Scenario: CVV with special characters is invalid
+    Given I have the owner "Jane Doe"
+    Given I have a credit card number "340000000000009"
+    Given I have the CVV "abc!"
+    Given I have the date "09/29"    
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 400
+    And the response should contain validation error "Wrong cvv" for field "Cvv"
+
+Scenario: Date should be required
+  Given I have the owner "John Doe"
+  And I have a credit card number "4111111111111111"
+  And I have the CVV "123"
+  When I send a POST request to "/CardValidation/card/credit/validate"
+  Then the response status code should be 400
+  And the response should contain validation error "Date is required" for field "Date"
+
+Scenario: Date with letters is invalid
+    Given I have the owner "Jane Doe"
+    Given I have a credit card number "340000000000009"
+    Given I have the CVV "123"
+    Given I have the date "ab/29"    
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 400
+    And the response should contain validation error "Wrong date" for field "Date"
+
+Scenario: Date with special characters is invalid
+    Given I have the owner "Jane Doe"
+    Given I have a credit card number "340000000000009"
+    Given I have the CVV "123"
+    Given I have the date "0!/29"    
+    When I send a POST request to "/CardValidation/card/credit/validate"
+    Then the response status code should be 400
+    And the response should contain validation error "Wrong date" for field "Date"
+
+Scenario: Date should not be expired
+  Given I have the owner "John Doe"
+  And I have a credit card number "4111111111111111"
+  And I have the date "09/24"
+  And I have the CVV "123"
+  When I send a POST request to "/CardValidation/card/credit/validate"
+  Then the response status code should be 400
+  And the response should contain validation error "Wrong date" for field "Date"

@@ -8,10 +8,6 @@
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <Compile Remove="Features\CardValidation.feature.cs" />
-	</ItemGroup>
-
 	<!-- Ensure reqnroll.json is copied to output -->
 	<ItemGroup>
 		<None Remove="reqnroll.json" />
@@ -21,10 +17,6 @@
 		<Content Include="reqnroll.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="Features\CardValidation.feature.cs" />
 	</ItemGroup>
 
 	<!-- NuGet packages -->

@@ -1,34 +1,18 @@
-﻿using CardValidation.Core.Enums;
-using CardValidation.Core.Models;
-using CardValidation.Core.Services;
+﻿using System.Net.Http.Json;
+using CardValidation.ViewModels;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using Reqnroll;
-using System.Net.Http.Json;
-using ValidationResult = CardValidation.Core.Models.ValidationResult;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Reqnroll;
 
-namespace CardValidation.Tests.Integration.StepsDefinition
+namespace CardValidation.Tests.Integration.StepsDefinitions
 {
     [Binding]
-    public class CardValidationSteps
+    public sealed class CardValidationSteps
     {
-        // Unit-level validation
-        private readonly CardValidationService _service = new();
-        private ValidationResult _validationResult = new();
-        private string _owner = string.Empty;
-        private string _issueDate = string.Empty;
-        private string _cvc = string.Empty;
-        private string _cardNumber = string.Empty;
-        private bool _result;
-        private PaymentSystemType _paymentSystemType;
-        private Exception? _exception;
-
-        // Integration-level API testing
         private readonly WebApplicationFactory<Program> _factory;
         private readonly ScenarioContext _scenarioContext;
-        private HttpResponseMessage _response = default!;
-        private CreditCard _creditCard = default!;
+        private HttpResponseMessage? _response; // nullable, initialized later
+        private CreditCard _creditCard = new();  // reset per scenario if needed
 
         public CardValidationSteps(WebApplicationFactory<Program> factory, ScenarioContext scenarioContext)
         {
@@ -36,92 +20,36 @@ namespace CardValidation.Tests.Integration.StepsDefinition
             _scenarioContext = scenarioContext;
         }
 
-        // Unit test steps
-        [Given("the card owner is {string}")]
-        public void GivenTheCardOwnerIs(string owner) => _owner = owner;
-
-        [Given("the issue date is {string}")]
-        public void GivenTheIssueDateIs(string issueDate) => _issueDate = issueDate;
-
-        [Given("the CVC is {string}")]
-        public void GivenTheCVCIs(string cvc) => _cvc = cvc;
-
-        [Given("the card number is {string}")]
-        public void GivenTheCardNumberIs(string cardNumber) => _cardNumber = cardNumber;
-
-        [When("I validate the owner")]
-        public void WhenIValidateOwner() => _result = _service.ValidateOwner(_owner);
-
-        [When("I validate the issue date")]
-        public void WhenIValidateIssueDate() => _result = _service.ValidateIssueDate(_issueDate);
-
-        [When("I validate the CVC")]
-        public void WhenIValidateCvc() => _result = _service.ValidateCvc(_cvc);
-
-        [When("I validate the card number")]
-        public void WhenIValidateCardNumber() => _result = _service.ValidateNumber(_cardNumber);
-
-        [When("I validate the full card")]
-        public void WhenIValidateTheFullCard()
+        // Optional: reset objects per scenario
+        [BeforeScenario]
+        public void Setup()
         {
-            var cardDto = new CardDto
-            {
-                Owner = _owner,
-                Number = _cardNumber,
-                IssueDate = _issueDate,
-                Cvc = _cvc
-            };
-
-            _validationResult = _service.ValidateCard(cardDto);
+            _creditCard = new CreditCard();
+            _response = null;
         }
 
-        [Then("the result should be valid")]
-        public void ThenTheResultShouldBeValid() => _result.Should().BeTrue();
-
-        [Then("the result should be invalid")]
-        public void ThenTheResultShouldBeInvalid() => _validationResult.IsValid.Should().BeFalse();
-
-        [Then("the errors should contain:")]
-        public void ThenTheErrorsShouldContain(Table table)
+        [Given(@"I have the owner ""(.*)""")]
+        public void GivenIHaveTheOwnerName(string owner)
         {
-            foreach (var row in table.Rows)
-            {
-                var expectedError = row[0];
-                _validationResult.Errors.Should().Contain(expectedError);
-            }
+            _creditCard.Owner = owner;
         }
 
-        [When("I get the payment system type")]
-        public void WhenIGetThePaymentSystemType()
-        {
-            try
-            {
-                _paymentSystemType = _service.GetPaymentSystemType(_cardNumber);
-            }
-            catch (Exception ex)
-            {
-                _exception = ex;
-            }
-        }
-
-        [Then("the result should be (true|false)")]
-        public void ThenTheResultShouldBe(bool expected) => _result.Should().Be(expected);
-
-        [Then("the payment system should be {string}")]
-        public void ThenThePaymentSystemShouldBe(string expected)
-        {
-            Enum.TryParse(expected, out PaymentSystemType expectedType).Should().BeTrue();
-            _paymentSystemType.Should().Be(expectedType);
-        }
-
-        [Then("an exception should be thrown")]
-        public void ThenAnExceptionShouldBeThrown() => _exception.Should().BeOfType<NotImplementedException>();
-
-        // Integration test steps
         [Given(@"I have a credit card number ""(.*)""")]
         public void GivenIHaveACreditCardNumber(string number)
         {
-            _creditCard = new CreditCard { Number = number };
+            _creditCard.Number = number;
+        }
+
+        [Given(@"I have the CVV ""(.*)""")]
+        public void GivenIHaveTheCVC(string cvv)
+        {
+            _creditCard.Cvv = cvv;
+        }
+
+        [Given(@"I have the date ""(.*)""")]
+        public void GivenIHaveTheDate(string date)
+        {
+            _creditCard.Date = date;
         }
 
         [When(@"I send a POST request to ""(.*)""")]
@@ -135,15 +63,27 @@ namespace CardValidation.Tests.Integration.StepsDefinition
         [Then(@"the response status code should be (.*)")]
         public void ThenTheResponseStatusCodeShouldBe(int expectedStatusCode)
         {
-            var actualStatusCode = (int)_response.StatusCode;
-            actualStatusCode.Should().Be(expectedStatusCode);
+            _response.Should().NotBeNull();
+            ((int)_response!.StatusCode).Should().Be(expectedStatusCode);
         }
 
         [Then(@"the response should contain ""(.*)""")]
         public async Task ThenTheResponseShouldContain(string expectedContent)
         {
-            var content = await _response.Content.ReadAsStringAsync();
+            _response.Should().NotBeNull();
+            var content = await _response!.Content.ReadAsStringAsync();
             content.Should().Contain(expectedContent);
+        }
+
+        [Then(@"the response should contain validation error ""(.*)"" for field ""(.*)""")]
+        public async Task ThenTheResponseShouldContainValidationError(string expectedError, string field)
+        {
+            _response.Should().NotBeNull();
+            var content = await _response!.Content.ReadAsStringAsync();
+            var errors = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string[]>>(content);
+
+            errors.Should().ContainKey(field);
+            errors![field].Should().Contain(expectedError);
         }
     }
 }

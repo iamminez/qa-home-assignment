@@ -28,14 +28,14 @@ jobs:
 
     # Step 4: Upload Unit Test Results
     - name: Upload Unit Test Results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4.3.1
       with:
         name: cardvalidation-unit-test-results
         path: TestResults/unit-tests.trx
 
     # Step 5: Upload Integration Test Results
     - name: Upload Integration Test Results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4.3.1
       with:
         name: cardvalidation-integration-test-results
         path: TestResults/integration-tests.trx
@@ -48,7 +48,7 @@ jobs:
 
     # Step 7: Upload HTML Report
     - name: Upload HTML Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4.3.1
       with:
         name: html-report
         path: TestResults/Report

@@ -14,11 +14,11 @@ RUN dotnet restore
 RUN mkdir -p /app/TestResults
 
 # Run xUnit Unit Tests
-RUN dotnet test Tests/CardValidation.Tests/CardValidation.Tests.Unit.csproj \
+RUN dotnet test CardValidation.Tests/CardValidation.Tests.Unit.csproj \
     --logger "trx;LogFileName=unit-tests.trx" \
     --results-directory /app/TestResults
 
 # Run Reqnroll Integration Tests
-RUN dotnet test Tests/CardValidation.Tests.Integration/CardValidation.Tests.Integration.csproj \
+RUN dotnet test CardValidation.Tests.Integration/CardValidation.Tests.Integration.csproj \
     --logger "trx;LogFileName=integration-tests.trx" \
     --results-directory /app/TestResults

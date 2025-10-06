@@ -1,11 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32002.261
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardValidation.Web", "CardValidation.Web\CardValidation.Web.csproj", "{B6992121-A357-4F08-8C8A-A2CA47424600}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardValidation.Core", "CardValidation.Core\CardValidation.Core.csproj", "{D9D8878E-3213-49FB-83E2-5A9B40EF0B42}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardValidation.Tests", "CardValidation.Tests\CardValidation.Tests.csproj", "{B4DB424C-10CD-4EBE-B2E0-9900B293F764}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardValidation.Tests.Integration", "CardValidation.Tests.Integration\CardValidation.Tests.In\CardValidation.Tests.Integration.csproj", "{C9AD3B08-D2F5-490E-92B4-58B269A1173A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		DockerFile.Tests = DockerFile.Tests
+		.github\workflows\test-pipeline.yml = .github\workflows\test-pipeline.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +33,21 @@ Global
 		{D9D8878E-3213-49FB-83E2-5A9B40EF0B42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9D8878E-3213-49FB-83E2-5A9B40EF0B42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9D8878E-3213-49FB-83E2-5A9B40EF0B42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4DB424C-10CD-4EBE-B2E0-9900B293F764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4DB424C-10CD-4EBE-B2E0-9900B293F764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4DB424C-10CD-4EBE-B2E0-9900B293F764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4DB424C-10CD-4EBE-B2E0-9900B293F764}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9AD3B08-D2F5-490E-92B4-58B269A1173A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9AD3B08-D2F5-490E-92B4-58B269A1173A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9AD3B08-D2F5-490E-92B4-58B269A1173A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9AD3B08-D2F5-490E-92B4-58B269A1173A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B4DB424C-10CD-4EBE-B2E0-9900B293F764} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C9AD3B08-D2F5-490E-92B4-58B269A1173A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {848EE3A9-38E1-4000-96C2-C5A893D24F71}

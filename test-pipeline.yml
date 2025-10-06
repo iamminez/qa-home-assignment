@@ -13,7 +13,7 @@ jobs:
     steps:
     # Step 1: Checkout code
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     # Step 2: Build Docker image
     - name: Build Docker image
@@ -28,14 +28,14 @@ jobs:
 
     # Step 4: Upload Unit Test Results
     - name: Upload Unit Test Results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: unit-test-results
         path: TestResults/unit-tests.trx
 
     # Step 5: Upload Integration Test Results
     - name: Upload Integration Test Results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: integration-test-results
         path: TestResults/integration-tests.trx
@@ -48,7 +48,7 @@ jobs:
 
     # (Optional) Step 7: Upload HTML Report
     - name: Upload HTML Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: html-report
         path: TestResults/Report

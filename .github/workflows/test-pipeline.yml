@@ -1,54 +1,66 @@
-name: Run CardValidation Tests in Docker
+    name: Run CardValidation Tests in Docker
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    on:
+      push:
+        branches: [ main ]
+      pull_request:
+        branches: [ main ]
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+    jobs:
+      test:
+        runs-on: ubuntu-latest
 
-    steps:
-    # Step 1: Checkout code
-    - name: Checkout code
-      uses: actions/checkout@v3
+        env:
+          ACTIONS_RUNNER_DEBUG: true
+          ACTIONS_STEP_DEBUG: true
 
-    # Step 2: Build Docker image
-    - name: Build Docker image
-      run: docker build -t cardvalidation-tests -f DockerFile.Tests .
+        steps:
+        # Step 1: Checkout code
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-    # Step 3: Extract test results from container
-    - name: Extract test results
-      run: |
-        docker create --name cardvalidation-container cardvalidation-tests
-        docker cp cardvalidation-container:/app/TestResults ./TestResults
-        docker rm cardvalidation-container
+        # Step 2: Clear GitHub Actions cache
+        - name: Clear GitHub Actions cache
+          run: rm -rf ~/.actions
 
-    # Step 4: Upload Unit Test Results
-    - name: Upload Unit Test Results
-      uses: actions/upload-artifact@v3
-      with:
-        name: unit-test-results
-        path: TestResults/unit-tests.trx
+        # Step 3: Build Docker image
+        - name: Build Docker image
+          run: docker build -t cardvalidation-tests -f Dockerfile.Tests .
 
-    # Step 5: Upload Integration Test Results
-    - name: Upload Integration Test Results
-      uses: actions/upload-artifact@v3
-      with:
-        name: integration-test-results
-        path: TestResults/integration-tests.trx
+        # Step 4: Extract test results from container
+        - name: Extract test results
+          run: |
+            docker create --name cardvalidation-container cardvalidation-tests
+            docker cp cardvalidation-container:/app/TestResults ./TestResults
+            docker rm cardvalidation-container
 
-    # (Optional) Step 6: Generate HTML Report
-    - name: Generate HTML Reports
-      run: |
-        dotnet tool install -g dotnet-reportgenerator-globaltool
-        reportgenerator -reports:TestResults/*.trx -targetdir:TestResults/Report -reporttypes:Html
+        # Step 5: Debug TestResults folder
+        - name: Debug TestResults
+          run: ls -R TestResults
 
-    # (Optional) Step 7: Upload HTML Report
-    - name: Upload HTML Report
-      uses: actions/upload-artifact@v3
-      with:
-        name: html-report
-        path: TestResults/Report
+        # Step 6: Upload Unit Test Results
+        - name: Upload Unit Test Results
+          uses: actions/upload-artifact@v4
+          with:
+            name: cardvalidation-unit-test-results
+            path: TestResults/unit-tests.trx
+
+        # Step 7: Upload Integration Test Results
+        - name: Upload Integration Test Results
+          uses: actions/upload-artifact@v4
+          with:
+            name: cardvalidation-integration-test-results
+            path: TestResults/integration-tests.trx
+
+        # Step 8: Generate HTML Reports
+        - name: Generate HTML Reports
+          run: |
+            dotnet tool install -g dotnet-reportgenerator-globaltool
+            reportgenerator -reports:TestResults/*.trx -targetdir:TestResults/Report -reporttypes:Html
+
+        # Step 9: Upload HTML Report
+        - name: Upload HTML Report
+          uses: actions/upload-artifact@v4
+          with:
+            name: html-report
+            path: TestResults/Report

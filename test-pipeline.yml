@@ -17,7 +17,7 @@ jobs:
 
     # Step 2: Build Docker image
     - name: Build Docker image
-      run: docker build -t cardvalidation-tests -f DockerFile.Tests .
+      run: docker build -t cardvalidation-tests -f Dockerfile.Tests .
 
     # Step 3: Extract test results from container
     - name: Extract test results

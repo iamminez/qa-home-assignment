@@ -1,0 +1,18 @@
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /app
+
+# Copy everything
+COPY . .
+
+# Restore dependencies
+RUN dotnet restore
+
+# Run xUnit Unit Tests
+RUN dotnet test Tests/CardValidation.Tests/CardValidation.Tests.csproj \
+    --logger "trx;LogFileName=unit-tests.trx" \
+    --results-directory /app/TestResults
+
+# Run Reqnroll Integration Tests
+RUN dotnet test Tests/CardValidation.Tests.Integration/CardValidation.Tests.Integration.csproj \
+    --logger "trx;LogFileName=integration-tests.trx" \
+    --results-directory /app/TestResults

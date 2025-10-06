@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Features\CardValidation.feature.cs" />
+	</ItemGroup>
+
+	<!-- Ensure reqnroll.json is copied to output -->
+	<ItemGroup>
+		<None Remove="reqnroll.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="reqnroll.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Features\CardValidation.feature.cs" />
+	</ItemGroup>
+F
+	<!-- NuGet packages -->
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" Version="6.0.4">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+		<PackageReference Include="xunit" Version="2.9.3" />
+		<PackageReference Include="xunit.analyzers" Version="1.24.0">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Reqnroll" Version="3.1.1" />
+		<PackageReference Include="Reqnroll.xUnit" Version="3.1.1" />
+		<PackageReference Include="FluentAssertions" Version="8.7.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.0" />
+		
+	</ItemGroup>
+
+	<!-- Project reference -->
+	<ItemGroup>
+		<ProjectReference Include="..\CardValidation.Core\CardValidation.Core.csproj" />
+		<ProjectReference Include="..\CardValidation.Web\CardValidation.Web.csproj" />
+	</ItemGroup>
+
+</Project>

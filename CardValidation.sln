@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardValidation.Core", "Card
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardValidation.Tests", "CardValidation.Tests\CardValidation.Tests.csproj", "{B4DB424C-10CD-4EBE-B2E0-9900B293F764}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardValidation.Tests.Unit", "CardValidation.Tests\CardValidation.Tests.Unit.csproj", "{B4DB424C-10CD-4EBE-B2E0-9900B293F764}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardValidation.Tests.Integration", "CardValidation.Tests.Integration\CardValidation.Tests.In\CardValidation.Tests.Integration.csproj", "{C9AD3B08-D2F5-490E-92B4-58B269A1173A}"
 EndProject

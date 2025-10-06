@@ -4,11 +4,29 @@ using CardValidation.Infrustructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ? Local function for service registration
+void ConfigureServices(IServiceCollection services)
+{
+    services.AddControllers();
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
+
+    // Register CardValidation service
+    services.AddTransient<ICardValidationService, CardValidationService>();
+
+    // Add MVC filters
+    services.AddMvc(options =>
+    {
+        options.Filters.Add(typeof(CreditCardValidationFilter));
+    });
+}
+
+// Call ConfigureServices
 ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -16,23 +34,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
 
-void ConfigureServices(IServiceCollection services)
-{
-    services.AddControllers();
-    services.AddEndpointsApiExplorer();
-    services.AddSwaggerGen();
-
-    services.AddTransient<ICardValidationService, CardValidationService>();
-
-    services.AddMvc(options =>
-    {
-        options.Filters.Add(typeof(CreditCardValidationFilter)); ;
-    });
-}
+// ? Required for integration tests
+public partial class Program { }

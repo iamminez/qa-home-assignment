@@ -1,0 +1,13 @@
+{
+  "bindingCulture": {
+    "name": "en-US"
+  },
+  "language": {
+    "feature": "en-US"
+  },
+  "stepAssemblies": [
+    {
+      "assembly": "CardValidation.Tests.Integration"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "bindingCulture": {
+    "name": "en-US"
+  },
+  "language": {
+    "feature": "en"
+  },
+  "stepAssemblies": [],
+  "plugins": [],
+  "generator": {
+    "allowDebugGeneratedFiles": false,
+    "allowRowTests": true,
+    "skipParallelizableMarkerForScenario": false
+  },
+  "runtime": {
+    "stopAtFirstError": false,
+    "missingOrPendingStepsOutcome": "Inconclusive"
+  }
+}

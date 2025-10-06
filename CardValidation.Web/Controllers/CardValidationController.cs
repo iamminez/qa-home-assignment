@@ -24,9 +24,8 @@ public class CardValidationController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var result = cardValidatior.GetPaymentSystemType(creditCard.Number ?? string.Empty);        
+        var result = cardValidatior.GetPaymentSystemType(creditCard.Number ?? string.Empty);
 
-        return Ok(result);
+        return Ok(result.ToString());
     }
 }
-
